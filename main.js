@@ -8,11 +8,9 @@ var buttonClear;
 var planets = [];
 
 var timeVel = 1;
-var pixelScale = 0.5*0.001; // 1 km is 0.5 pixel
-var kms = 1.0/3600;
-var acceleration_scale = 0.5*(10**(-10));
+var pixelScale = 1/1000; // 1000 km is 1 pixel
 var gravitation = 6.67408 * (10**(-11));
-console.log(gravitation, acceleration_scale);
+console.log(gravitation);
 
 class Planet {
 	constructor(center_x, center_y, radius, mass, colour = 255) {
@@ -30,8 +28,9 @@ class Planet {
 	}
 
 	move() {
-		this.x += this.velocity.x*pixelScale*timeVel*deltaTime/1000;
-		this.y += this.velocity.y*pixelScale*timeVel*deltaTime/1000;
+		// s = so + vt
+		this.x += this.velocity.x*pixelScale*timeVel*deltaTime/1000000;
+		this.y += this.velocity.y*pixelScale*timeVel*deltaTime/1000000;
 		
 		for(let planet of planets) {
 			if(planet != this) {
@@ -39,6 +38,10 @@ class Planet {
 				this.checkColision(planet);
 			}
 		}
+	}
+
+	accelerate(vel) {
+		this.velocity.add(vel/3.6);
 	}
 
 	checkColision(planet) {
@@ -60,19 +63,31 @@ class Planet {
 		let res = createVector(0, 0);
 		for(let planet of planets) {
 			if(planet != this) {
+				// universal gravitation
+				// F = GMm/d2
+				// a = GM/d2
+				// Units:
+				// F => N
+				// M => Kg
+				// d => m
+				// a => m/s2
 				let mass = planet.mass;
 				let distance_vet = createVector(planet.x, planet.y).sub(createVector(this.x, this.y));
-				let distance = distance_vet.mag();
-				//console.log(distance);
-				let acceleration = gravitation * mass / ((distance*distance) * 1000000);
-				//console.log(acceleration);
-				let acceleration_vet = distance_vet.normalize().setMag(acceleration*timeVel*pixelScale*deltaTime/1000000);
-				//console.log(acceleration_vet);
+				let distance = distance_vet.mag(); //distance value come in pixels
+				let distanceMeters = distance*(1/pixelScale)*1000;
+
+				// acceleration => m/s2
+				let acceleration = gravitation * mass / (distanceMeters*distanceMeters);
+
+				// transforming it in a vector
+				let acceleration_vet = distance_vet.normalize().setMag(acceleration);
 				res.add(acceleration_vet);
 			}
 		}
-		//console.log(res);
-		this.velocity.add(res);
+		// v = v0 + at
+		let velocityToAdd = res.mult(timeVel*(deltaTime/1000));
+		// should be m/s
+		this.velocity.add(velocityToAdd);
 	}
 }
 
@@ -92,8 +107,10 @@ function setup() {
 	//planets.push(new Planet(500, 500, 20, (5*10**24)));
 	//planets.push(new Planet(500, 0, 100, (5*10**24)));
 	//planets.push(new Planet(400, 200, 60, (5*10**24)));
-	planets.push(new Planet(width/2, height/2, 6.5, (5*10**24)));
-	planets.push(new Planet(width/2, 200 + height/2, 1.75, (7.36*10**22)));
+	let moonHeight = 0;
+	planets.push(new Planet(width/2, -70 + height/2, 6.5, (5*10**24)));
+	planets.push(new Planet(width/2, 70 + height/2, 6.5, (5*10**24)));
+	planets.push(new Planet(width/2, moonHeight + height/2, 1.75, (7.36*10**22)));
 
 	background(0);
 	for(let planet of planets) {
@@ -101,8 +118,8 @@ function setup() {
 	}
 	//planets[0].velocity.add(0,-1);
 	//planets[1].velocity.add(0,1);
-	planets[1].velocity.add(1,0);
-	timeVel = 5000;
+	planets[1].accelerate(3670,0);
+	timeVel = 60000;
 
 }
 
