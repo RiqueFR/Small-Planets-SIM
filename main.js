@@ -21,9 +21,9 @@ class Planet {
 		circle(this.x, this.y, this.radius);
 	}
 
-	move(x, y) {
-		this.x += x;
-		this.y += y;
+	move() {
+		this.x += this.velocity.x;
+		this.y += this.velocity.y;
 	}
 }
 
@@ -70,4 +70,7 @@ function draw() {
 	if(pause == true) return; // when game paused don't render
 
 	// all the logics should go here
+	for(let planet of planets) {
+		planet.move();
+	}
 }
