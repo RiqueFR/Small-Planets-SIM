@@ -1,10 +1,32 @@
-//import * as p5 from "./p5.js"
 var fpsMax = 60;
 
 var pause = true;
 
 var buttonPlay;
 var buttonClear;
+
+var planets = [];
+
+class Planet {
+	constructor(center_x, center_y, radius, colour = 255) {
+		this.x = center_x;
+		this.y = center_y;
+		this.radius = radius;
+		this.colour = colour;
+		this.velocity = createVector(0, 0);
+	}
+
+	draw() {
+		fill(this.colour);
+		circle(this.x, this.y, this.radius);
+	}
+
+	move(x, y) {
+		this.x += x;
+		this.y += y;
+	}
+}
+
 
 function setup() {
 	createCanvas(800, 600);
@@ -16,6 +38,11 @@ function setup() {
 	buttonPlay.mousePressed(handlePlay);
 	buttonClear = createButton("Clear");
 	buttonClear.mousePressed(clearGrid);
+
+	planets.push(new Planet(50, 50, 30));
+	planets.push(new Planet(140, 30, 20));
+	planets.push(new Planet(400, 500, 100));
+	planets.push(new Planet(280, 20, 60));
 }
 
 function handlePlay() {
@@ -30,5 +57,14 @@ function clearGrid() {
 }
 
 function draw() {
+	// all initial draw should go here
+	background(0);
+	for(let planet of planets) {
+		planet.draw();
+	}
+	
 	if(pause == true) return; // when game paused don't render
+
+	// all the logics should go here
+	planets[0].move(1,1);
 }
