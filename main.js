@@ -10,20 +10,24 @@ var planets = [];
 var timeVel = 1;
 var pixelScale = 1/1000; // 1000 km is 1 pixel
 var gravitation = 6.67408 * (10**(-11));
-console.log(gravitation);
 
 class Planet {
-	constructor(center_x, center_y, radius, mass, colour = 255) {
+	constructor(center_x, center_y, radius, mass, red = 255, green = 255, blue = 255) {
 		this.x = center_x;
 		this.y = center_y;
 		this.radius = radius;
 		this.mass = mass;
-		this.colour = colour;
+		this.colour = {
+			'R': red,
+			'G': green,
+			'B': blue
+		};
 		this.velocity = createVector(0, 0);
 	}
 
 	draw() {
-		fill(this.colour);
+		noStroke();
+		fill(this.colour["R"],this.colour["G"],this.colour["B"]);
 		circle(this.x, this.y, this.radius*2);
 	}
 
@@ -103,22 +107,21 @@ function setup() {
 	buttonClear = createButton("Clear");
 	buttonClear.mousePressed(clearPlanets);
 
-	//planets.push(new Planet(100, 100, 30, (5*10**24)));
-	//planets.push(new Planet(500, 500, 20, (5*10**24)));
-	//planets.push(new Planet(500, 0, 100, (5*10**24)));
-	//planets.push(new Planet(400, 200, 60, (5*10**24)));
-	let moonHeight = 0;
-	planets.push(new Planet(width/2, -70 + height/2, 6.5, (5*10**24)));
-	planets.push(new Planet(width/2, 70 + height/2, 6.5, (5*10**24)));
-	planets.push(new Planet(width/2, moonHeight + height/2, 1.75, (7.36*10**22)));
+	planets.push(new Planet(100, 100, 30, (5*10**24), 0, 0, 255));
+	planets.push(new Planet(500, 500, 20, (5*10**24)));
+	planets.push(new Planet(500, 0, 100, (5*10**24)));
+	planets.push(new Planet(400, 200, 60, (5*10**24)));
+
+	//let moonHeight = 0;
+	//planets.push(new Planet(width/2, -70 + height/2, 6.5, (5*10**24)));
+	//planets.push(new Planet(width/2, 70 + height/2, 6.5, (5*10**24)));
+	//planets.push(new Planet(width/2, moonHeight + height/2, 1.75, (7.36*10**22)));
 
 	background(0);
 	for(let planet of planets) {
 		planet.draw();
 	}
-	//planets[0].velocity.add(0,-1);
-	//planets[1].velocity.add(0,1);
-	planets[1].accelerate(3670,0);
+	//planets[1].accelerate(3670,0);
 	timeVel = 60000;
 
 }
