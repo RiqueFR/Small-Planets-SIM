@@ -37,7 +37,7 @@ function setup() {
 	buttonPlay = createButton("Play");
 	buttonPlay.mousePressed(handlePlay);
 	buttonClear = createButton("Clear");
-	buttonClear.mousePressed(clearGrid);
+	buttonClear.mousePressed(clearPlanets);
 
 	planets.push(new Planet(50, 50, 30));
 	planets.push(new Planet(140, 30, 20));
@@ -53,7 +53,11 @@ function handlePlay() {
 	buttonPlay.html(text);
 }
 
-function clearGrid() {
+function clearPlanets() {
+	for(let i = 0; i < planets.length; i++) {
+		delete planets[i];
+	}
+	planets = [];
 }
 
 function draw() {
@@ -66,5 +70,4 @@ function draw() {
 	if(pause == true) return; // when game paused don't render
 
 	// all the logics should go here
-	planets[0].move(1,1);
 }
