@@ -1,6 +1,10 @@
 var fpsMax = 60;
 
 var pause = true;
+var pressed = false;
+
+var camX = 0;
+var camY = 0;
 
 var buttonPlay;
 var buttonClear;
@@ -140,22 +144,32 @@ function clearPlanets() {
 	planets = [];
 }
 
+function mouseDragged() {
+	camX += mouseX - pmouseX;
+	camY += mouseY - pmouseY;
+}
+
 function draw() {
+	translate(camX, camY);
+
+	if(pause == false) {
+		for(let planet of planets) {
+			planet.move();
+		}
+	}
+
 	// all initial draw should go here
 	background(0);
 	for(let planet of planets) {
 		// only render planets if they are visible
-		if(planet.x+planet.radius >= 0 && planet.x-planet.radius <= width &&
-		   planet.y+planet.radius >= 0 && planet.y-planet.radius <= height)
+		if(planet.x+planet.radius+camX >= 0 && planet.x-planet.radius+camX <= width &&
+		   planet.y+planet.radius+camY >= 0 && planet.y-planet.radius+camY <= height)
 			planet.draw();
 	}
 	
 	if(pause == true) return; // when game paused don't render
 
 	// all the logics should go here
-	for(let planet of planets) {
-		planet.move();
-	}
 	
 	for(let planet of planets) {
 		planet.update();
